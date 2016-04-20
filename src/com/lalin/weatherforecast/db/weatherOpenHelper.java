@@ -11,7 +11,7 @@ public class weatherOpenHelper extends SQLiteOpenHelper{
 			                                      + " province_name text, province_code text)";
 	public static final String CREATE_CITY = "create table if not exists City (_id integer primary key autoincrement, city_name text,"
 												+ " city_code text, province_id integer)";
-	public static final String CREATE_COUNTRY = "create table if not exists Country (_id integer primary key autoincrement, country_name text,"
+	public static final String CREATE_COUNTY = "create table if not exists County (_id integer primary key autoincrement, country_name text,"
 												+ " country_code text, city_id integer)";
 	public weatherOpenHelper(Context context, String name, CursorFactory factory, int version) {
 		super(context, name, factory, version);
@@ -23,7 +23,7 @@ public class weatherOpenHelper extends SQLiteOpenHelper{
 		// TODO Auto-generated method stub
 		db.execSQL(CREATE_PROVINCE);
 		db.execSQL(CREATE_CITY);
-		db.execSQL(CREATE_COUNTRY);
+		db.execSQL(CREATE_COUNTY);
 	}
 
 	@Override
