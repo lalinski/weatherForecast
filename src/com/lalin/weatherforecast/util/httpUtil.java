@@ -9,6 +9,8 @@ import java.net.MalformedURLException;
 
 import java.net.URL;
 
+import android.util.Log;
+
 public class httpUtil {
 	public static void sendHttpRequest(final String address, final HttpCallbackListener listener){
 		new Thread(new Runnable(){
@@ -28,6 +30,7 @@ public class httpUtil {
 						while((line = reader.readLine()) != null){
 							response.append(line);
 						}
+						Log.i("info", response.toString());
 						if(listener != null){
 							listener.onFinish(response.toString());
 						}

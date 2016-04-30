@@ -15,8 +15,12 @@ import com.lalin.weatherforecast.util.httpUtil;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -42,8 +46,18 @@ public class chooseAreaActivity extends Activity{
 	private Province selectedProvince;
 	private City selectedCity;
 	private int currentLevel;
+	private boolean isFromWeatherActivity;
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
+		isFromWeatherActivity = getIntent().getBooleanExtra("from_weather_activity", false);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		if(prefs.getBoolean("city_selected", false) && ! isFromWeatherActivity){
+			Intent intent = new Intent(this, weatherActivity.class);
+			startActivity(intent);
+			finish();
+			return;
+		}
+		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.choose_area);
 		listView = (ListView) findViewById(R.id.list_view);
@@ -62,10 +76,17 @@ public class chooseAreaActivity extends Activity{
 				}else if(currentLevel == LEVEL_CITY){
 					selectedCity = cityList.get(position);
 					queryCounties();
+				}else if(currentLevel == LEVEL_COUNTY){
+					String countyCode = countyList.get(position).getCountyCode();
+					Intent intent = new Intent(chooseAreaActivity.this, weatherActivity.class);
+					intent.putExtra("county_code", countyCode);
+					startActivity(intent);
+					finish();
 				}
 			}
 		});
 		queryProvinces();
+	//	queryCounties();
 	}
 	private void queryProvinces(){
 	//	queryFromServer(null, "province");
@@ -101,6 +122,8 @@ public class chooseAreaActivity extends Activity{
 		
 	}
 	private void queryCounties(){
+	//	queryFromServer("0501", "county");
+		
 		countyList = db.loadCounties(selectedCity.getId());
 		if(countyList.size() > 0){
 			dataList.clear();
@@ -112,7 +135,8 @@ public class chooseAreaActivity extends Activity{
 			titleText.setText(selectedCity.getCityName());
 			currentLevel = LEVEL_COUNTY;
 		}else{
-			queryFromServer(selectedCity.getCityName(), "city");
+			queryFromServer(selectedCity.getCityCode(), "county");
+		//	queryFromServer("0501", "county");
 		}
 		
 	}
@@ -129,6 +153,8 @@ public class chooseAreaActivity extends Activity{
 			
 			@Override
 			public void onFinish(String response) {
+		//		Log.i("info", response);
+		//		System.out.println(response);
 				// TODO Auto-generated method stub
 				boolean result = false;
 				if("province".equals(type)){
@@ -139,9 +165,10 @@ public class chooseAreaActivity extends Activity{
 					result = Utility.handleCountiesResponse(db, response, selectedCity.getId());
 				}
 				if(result){
+					closeProgressDialog();
 					runOnUiThread(new Runnable(){
 						public void run(){
-							closeProgressDialog();
+					//		closeProgressDialog();
 							if("province".equals(type)){
 								queryProvinces();
 							}else if("city".equals(type)){
@@ -189,6 +216,9 @@ public class chooseAreaActivity extends Activity{
 		}else if(currentLevel == LEVEL_CITY){
 			queryProvinces();
 		}else{
+			if(isFromWeatherActivity){
+				Intent intent = new Intent(this, weatherActivity.class);
+			}
 			finish();
 		}
 	}

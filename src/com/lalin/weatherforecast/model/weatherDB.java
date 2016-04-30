@@ -84,20 +84,20 @@ public class weatherDB {
 			ContentValues values = new ContentValues();
 			values.put("county_name", county.getCountyName());
 			values.put("county_code", county.getCountyCode());
-			values.put("city_Id", county.getCityId());
+			values.put("city_id", county.getCityId());
 			db.insert("County", null, values);
 		}
 	}
-	public List<County> loadCounties(int city_Id){
+	public List<County> loadCounties(int city_id){
 		List<County> list = new ArrayList<County>();
-		Cursor cr = db.query("City", null, "city_id = ?", new String[]{String.valueOf(city_Id)}, null, null, null);
+		Cursor cr = db.query("County", null, "city_id = ?", new String[]{String.valueOf(city_id)}, null, null, null);
 		if(cr != null){
 			while(cr.moveToNext()){
 				County county = new County();
 				county.setId(cr.getInt(cr.getColumnIndex("_id")));
 				county.setCountyName(cr.getString(cr.getColumnIndex("county_name")));
 				county.setCountyCode(cr.getString(cr.getColumnIndex("county_code")));
-				county.setCityId(city_Id);
+				county.setCityId(city_id);
 				list.add(county);
 			}
 			cr.close();
