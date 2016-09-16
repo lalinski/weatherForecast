@@ -42,9 +42,11 @@
             android:id="@+id/publish_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
             android:layout_alignParentRight="true"
             android:layout_marginTop="10dp"
             android:textColor="#fff"
+            
             android:textSize="18sp" />
 
         <LinearLayout
@@ -57,10 +59,11 @@
             <TextView
                 android:id="@+id/current_date"
                 android:layout_width="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:textColor="#fff"
-                android:textSize="18sp" />
+                android:textSize="25sp" />
 
             <TextView
                 android:id="@+id/weather_desp"
@@ -81,16 +84,17 @@
                     android:id="@+id/temp1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
+                    android:layout_gravity="center_vertical"
                     android:textColor="#fff"
                     android:textSize="40sp" />
 
                 <TextView
+                    android:id="@+id/dash"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginRight="10dp"
+                    android:visibility="gone"
+                   
                     android:textColor="#fff"
                     android:textSize="40sp"
                     android:text="~" />

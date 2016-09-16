@@ -26,6 +26,12 @@
          <activity
             android:name="com.lalin.weatherforecast.activity.weatherActivity" >
         </activity>
+        <service
+            android:name="com.lalin.weatherforecast.service.autoUpdateService" >
+        </service>
+          <receiver
+            android:name="com.lalin.weatherforecast.receiver.autoUpdateReceiver" >
+        </receiver>
     </application>
 
 </manifest>

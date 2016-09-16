@@ -3,6 +3,7 @@ package com.lalin.weatherforecast.activity;
 
 
 import com.lalin.weatherforecast.R;
+import com.lalin.weatherforecast.service.autoUpdateService;
 import com.lalin.weatherforecast.util.HttpCallbackListener;
 import com.lalin.weatherforecast.util.Utility;
 import com.lalin.weatherforecast.util.httpUtil;
@@ -31,6 +32,7 @@ public class weatherActivity extends Activity implements OnClickListener{
 	private TextView temp2Text;
 	private TextView currentDateText;
 	private Button switchCity, refreshWeather;
+	private TextView dash;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -48,6 +50,7 @@ public class weatherActivity extends Activity implements OnClickListener{
 		refreshWeather = (Button) findViewById(R.id.refresh_weather);
 		switchCity.setOnClickListener(this);
 		refreshWeather.setOnClickListener(this);
+		dash = (TextView) findViewById(R.id.dash);
 		String countyCode = getIntent().getStringExtra("county_code");
 		if(!TextUtils.isEmpty(countyCode)){
 			publishText.setText("synchronizing...");
@@ -126,13 +129,17 @@ public class weatherActivity extends Activity implements OnClickListener{
 	private void showWeather(){
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		cityNameText.setText(prefs.getString("city_name", ""));
-		temp1Text.setText(prefs.getString("temp1", ""));
-		temp2Text.setText(prefs.getString("temp2", ""));
+		temp1Text.setText(prefs.getString("temp2", ""));
+		temp2Text.setText(prefs.getString("temp1", ""));
+		dash.setVisibility(View.VISIBLE);
 		weatherDespText.setText(prefs.getString("weather_desp", ""));
-		publishText.setText("today" + prefs.getString("publish_time", "") + "published");
+		
+		publishText.setText("today " + prefs.getString("publish_time", "") + " published");
 		currentDateText.setText(prefs.getString("current_date", ""));
 		weatherInfoLayout.setVisibility(View.VISIBLE);
 		cityNameText.setVisibility(View.VISIBLE);
+		Intent intent = new Intent(this, autoUpdateService.class);
+		startService(intent);
 	}
 
 }

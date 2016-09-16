@@ -23,6 +23,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -64,6 +66,7 @@ public class chooseAreaActivity extends Activity{
 		titleText = (TextView) findViewById(R.id.title_text);
 		adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, dataList);
 		listView.setAdapter(adapter);
+		listviewAnimation();
 		db = weatherDB.getInstance(this);
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -81,7 +84,7 @@ public class chooseAreaActivity extends Activity{
 					Intent intent = new Intent(chooseAreaActivity.this, weatherActivity.class);
 					intent.putExtra("county_code", countyCode);
 					startActivity(intent);
-					finish();
+				//	finish();
 				}
 			}
 		});
@@ -97,6 +100,7 @@ public class chooseAreaActivity extends Activity{
 				dataList.add(p.getProvinceName());
 			}
 			adapter.notifyDataSetChanged();
+			listviewAnimation();
 			listView.setSelection(0);
 			titleText.setText("ÖÐ¹ú");
 			currentLevel = LEVEL_PROVINCE;
@@ -113,6 +117,7 @@ public class chooseAreaActivity extends Activity{
 				dataList.add(p.getCityName());
 			}
 			adapter.notifyDataSetChanged();
+			listviewAnimation();
 			listView.setSelection(0);
 			titleText.setText(selectedProvince.getProvinceName());
 			currentLevel = LEVEL_CITY;
@@ -131,6 +136,7 @@ public class chooseAreaActivity extends Activity{
 				dataList.add(p.getCountyName());
 			}
 			adapter.notifyDataSetChanged();
+			listviewAnimation();
 			listView.setSelection(0);
 			titleText.setText(selectedCity.getCityName());
 			currentLevel = LEVEL_COUNTY;
@@ -221,5 +227,11 @@ public class chooseAreaActivity extends Activity{
 			}
 			finish();
 		}
+	}
+	public void listviewAnimation(){
+		LayoutAnimationController lac=new LayoutAnimationController(AnimationUtils.loadAnimation(this, R.anim.zoom_in));
+	    lac.setOrder(LayoutAnimationController.ORDER_RANDOM);
+	    listView.setLayoutAnimation(lac);
+	    listView.startLayoutAnimation();
 	}
 }
