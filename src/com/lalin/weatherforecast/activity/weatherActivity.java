@@ -8,7 +8,7 @@ import com.lalin.weatherforecast.util.HttpCallbackListener;
 import com.lalin.weatherforecast.util.Utility;
 import com.lalin.weatherforecast.util.httpUtil;
 
-
+import android.R.string;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -33,12 +34,18 @@ public class weatherActivity extends Activity implements OnClickListener{
 	private TextView currentDateText;
 	private Button switchCity, refreshWeather;
 	private TextView dash;
+	
+	private ImageView dayImage;
+	private ImageView nightImage;
+	
+	private String weatherCode = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
+		
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.weather_layout);
+		setContentView(R.layout.weather_layout2);
 		weatherInfoLayout = (LinearLayout) findViewById(R.id.weather_info_layout);
 		temp1Text = (TextView) findViewById(R.id.temp1);
 		temp2Text = (TextView) findViewById(R.id.temp2);
@@ -51,6 +58,10 @@ public class weatherActivity extends Activity implements OnClickListener{
 		switchCity.setOnClickListener(this);
 		refreshWeather.setOnClickListener(this);
 		dash = (TextView) findViewById(R.id.dash);
+		
+		dayImage = (ImageView) findViewById(R.id.dayimage);
+		nightImage = (ImageView) findViewById(R.id.nightimage);
+		
 		String countyCode = getIntent().getStringExtra("county_code");
 		if(!TextUtils.isEmpty(countyCode)){
 			publishText.setText("synchronizing...");
@@ -69,14 +80,19 @@ public class weatherActivity extends Activity implements OnClickListener{
 				Intent intent = new Intent(this, chooseAreaActivity.class);
 				intent.putExtra("from_weather_activity", true);
 				startActivity(intent);
+				overridePendingTransition(R.anim.zoom_in,R.anim.zoom_out);
 				finish();
 				break;
 			case R.id.refresh_weather:
 				publishText.setText("synchronizing...");
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-				String weatherCode = prefs.getString("weather_code", "");
-				if(!TextUtils.isEmpty(weatherCode)){
-					queryWeatherInfo(weatherCode);
+				String weatherCode_fr = prefs.getString("weather_code", "");
+				if(weatherCode != null || weatherCode != "")
+					weatherCode_fr = weatherCode;
+				if(!TextUtils.isEmpty(weatherCode_fr)){
+					Log.i("info", "refreshWeather=" + weatherCode_fr + "  weatherCode=" + weatherCode);
+					queryWeatherInfo(weatherCode_fr);
+					
 				}
 				break;
 			default:
@@ -85,10 +101,12 @@ public class weatherActivity extends Activity implements OnClickListener{
 	}
 	private void queryWeatherCode(String countyCode){
 		String address = "http://www.weather.com.cn/data/list3/city" + countyCode + ".xml";
+		Log.i("info", "countyCode" + address);
 		queryFromServer(address, "countyCode");
 	}
 	private void queryWeatherInfo(String weatherCode){
 		String address = "http://www.weather.com.cn/data/cityinfo/" + weatherCode + ".html";
+		Log.i("info", "weatherInfo" + address);
 		queryFromServer(address, "weatherCode");
 	}
 	private void queryFromServer(final String address, final String type){
@@ -101,7 +119,8 @@ public class weatherActivity extends Activity implements OnClickListener{
 					if(!TextUtils.isEmpty(response)){
 						String [] array = response.split("\\|");
 						if(array != null && array.length == 2){
-							String weatherCode = array[1];
+				//			String weatherCode = array[1];
+							weatherCode = array[1];
 							Log.i("info", "array[0] = " + array[0]);
 							Log.i("info", "array[1] = " + array[1]);
 							queryWeatherInfo(weatherCode);
@@ -138,6 +157,20 @@ public class weatherActivity extends Activity implements OnClickListener{
 		currentDateText.setText(prefs.getString("current_date", ""));
 		weatherInfoLayout.setVisibility(View.VISIBLE);
 		cityNameText.setVisibility(View.VISIBLE);
+		
+		String urlDay = prefs.getString("dayimage", "");
+		String urlNight = prefs.getString("nightimage", "");
+		if(urlDay != null && urlDay != ""){
+		//	urlDay = "http://m.weather.com.cn/img/" + "b0.gif";
+		//	Log.i("info", urlDay);
+			urlDay = "http://m.weather.com.cn/img/b" + urlDay.substring(1);
+		    new asyncImgeTask(dayImage).execute(urlDay);
+		}
+		if(!TextUtils.isEmpty(urlNight)){
+			urlNight = "http://m.weather.com.cn/img/b" + urlNight.substring(1);
+			Log.i("info", urlNight);
+		    new asyncImgeTask(nightImage).execute(urlNight);
+		}
 		Intent intent = new Intent(this, autoUpdateService.class);
 		startService(intent);
 	}

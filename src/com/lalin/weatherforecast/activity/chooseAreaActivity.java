@@ -15,14 +15,17 @@ import com.lalin.weatherforecast.util.httpUtil;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
@@ -56,6 +59,7 @@ public class chooseAreaActivity extends Activity{
 		if(prefs.getBoolean("city_selected", false) && ! isFromWeatherActivity){
 			Intent intent = new Intent(this, weatherActivity.class);
 			startActivity(intent);
+			overridePendingTransition(R.anim.zoom_in,R.anim.zoom_out);
 			finish();
 			return;
 		}
@@ -84,6 +88,7 @@ public class chooseAreaActivity extends Activity{
 					Intent intent = new Intent(chooseAreaActivity.this, weatherActivity.class);
 					intent.putExtra("county_code", countyCode);
 					startActivity(intent);
+					overridePendingTransition(R.anim.zoom_in,R.anim.zoom_out);
 				//	finish();
 				}
 			}
@@ -224,6 +229,7 @@ public class chooseAreaActivity extends Activity{
 		}else{
 			if(isFromWeatherActivity){
 				Intent intent = new Intent(this, weatherActivity.class);
+			//	overridePendingTransition(R.anim.zoom_in,R.anim.zoom_out);
 			}
 			finish();
 		}
@@ -231,7 +237,32 @@ public class chooseAreaActivity extends Activity{
 	public void listviewAnimation(){
 		LayoutAnimationController lac=new LayoutAnimationController(AnimationUtils.loadAnimation(this, R.anim.zoom_in));
 	    lac.setOrder(LayoutAnimationController.ORDER_RANDOM);
+	    lac.setDelay(0.05f);
 	    listView.setLayoutAnimation(lac);
 	    listView.startLayoutAnimation();
 	}
+}
+class animationOfList extends LayoutAnimationController{
+
+	public animationOfList(Animation animation, float delay) {
+		super(animation, delay);
+		// TODO Auto-generated constructor stub
+	}
+
+	public animationOfList(Animation animation) {
+		super(animation);
+		// TODO Auto-generated constructor stub
+	}
+
+	public animationOfList(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	protected long getDelayForView(View view) {
+		// TODO Auto-generated method stub
+		return super.getDelayForView(view);
+	}
+	
 }
