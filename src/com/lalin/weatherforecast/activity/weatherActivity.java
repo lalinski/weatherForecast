@@ -2,6 +2,8 @@ package com.lalin.weatherforecast.activity;
 
 
 
+import java.util.Date;
+
 import com.lalin.weatherforecast.R;
 import com.lalin.weatherforecast.service.autoUpdateService;
 import com.lalin.weatherforecast.util.HttpCallbackListener;
@@ -153,7 +155,15 @@ public class weatherActivity extends Activity implements OnClickListener{
 		dash.setVisibility(View.VISIBLE);
 		weatherDespText.setText(prefs.getString("weather_desp", ""));
 		
-		publishText.setText("today " + prefs.getString("publish_time", "") + " published");
+		Date date = new Date();
+		int hour = date.getHours();
+		if(hour < 18)
+		    publishText.setText("yesterday " + prefs.getString("publish_time", "") + " published");
+		else
+			publishText.setText("today " + prefs.getString("publish_time", "") + " published");
+			
+		System.out.println(prefs.getString("publish_time", ""));
+		Log.i("info", "publish_time" + prefs.getString("publish_time", ""));
 		currentDateText.setText(prefs.getString("current_date", ""));
 		weatherInfoLayout.setVisibility(View.VISIBLE);
 		cityNameText.setVisibility(View.VISIBLE);
